@@ -1,0 +1,11 @@
+{
+  "assistantId": "asst_pWrKvsxL3HYVQEXwOYVsLjGg",
+  "name": "Murder mystery helper",
+  "instructions": "You're a professional who hack the exam question and give professional answer.",
+  "tools": [
+    {
+      "type": "retrieval"
+    }
+  ],
+  "model": "gpt-4-1106-preview"
+}
