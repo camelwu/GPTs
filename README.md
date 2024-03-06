@@ -26,13 +26,23 @@ pnpm start
 Description: Retrieves a list of all assistants. 
 
 `POST /assistants` 
-Description: Creates a new assistant. Payload: { "name": "Your assistant name", "instructions": "Your gpts prompt", "tools":[], "model": "" } 
+Description: Creates a new assistant. Payload: { "name": "Your assistant name", "instructions": "Your gpts prompt", "tools":[], "model": "gpt4" } 
 
-`POST /chat/:assistantid` 
+`POST /chat/:assistantID` 
 Description: Sends a chat question to the OpenAI assistant and returns its response. Payload: { "question": "Your question here" }  
+assistantID（助手ID）必须
 
-`POST /upload` 
+`POST /chat/:assistantID/:threadID` 
+Description: Sends a chat question to the OpenAI assistant, in an old thread and returns its response. Payload: { "question": "Your question here" }  
+assistantID（助手ID）必须
+threadID（对话ID）必须，如果新建对话，参考👆上面，thread是对话的全过程，可以保证有上下文
+
+`POST /upload/` 
 Description: Uploads a file to be used with the OpenAI assistant. Form-data: file: [Your File Here], assistantId: "assistantId"
+
+`POST /upload/:assistantID` 
+Description: Uploads a file to be used with the OpenAI assistant. Form-data: file: [Your File Here], assistantId in URI
+
 
 ## 使用说明
 ### 创建 
