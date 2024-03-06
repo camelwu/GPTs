@@ -22,7 +22,7 @@ async function control(req, res) {
     res.send("File uploaded and successfully added to assistant");
   } catch (error) {
     console.error(error);
-    res.status(500).send("An error occurred during file upload");
+    res.status(500).send("An error occurred during file upload", error);
   }
 }
 
