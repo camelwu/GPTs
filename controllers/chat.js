@@ -17,7 +17,7 @@ async function control(req, res) {
 
     // Create a run
     const run = await openai.beta.threads.runs.create(thread.id, {
-      assistant_id: assistantDetails.assistantId ? assistantDetails.assistantId : assistantDetails.id,
+      assistant_id: aid ? aid : assistantDetails.id,
     });
 
     // Fetch run-status
@@ -38,13 +38,17 @@ async function control(req, res) {
       .pop();
 
     if (lastMessageForRun) {
-      res.json({ response: lastMessageForRun.content[0].text.value });
+      res.json({
+        response: lastMessageForRun.content[0].text.value,
+        assistantId: aid ? aid : assistantDetails.id,
+        threadId: thread.id
+      });
     } else {
       res.status(500).send("No response received from the assistant.");
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send("An error occurred");
+    res.status(500).send("An error occurred", error);
   }
 }
 
