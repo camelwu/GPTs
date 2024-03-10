@@ -27,8 +27,9 @@ async function createAssistant(assistantConfig) {
   try {
     // create a new assistant
     const assistant = await openai.beta.assistants.create(assistantConfig);
-    console.log(assistant);
-    assistantDetails = { ...assistant};
+    // console.log(assistant);
+    // assistantDetails = { ...assistant};
+    return assistant;
   } catch (error) {
     console.error("Error creating assistant:", error);
   }
