@@ -26,8 +26,9 @@ async function createAssistant(assistantConfig) {
   }
   try {
     // create a new assistant
-    const assistant = openai.beta.assistants.create(assistantConfig);
-    assistantDetails = { assistantId: assistant.id, ...assistantConfig };
+    const assistant = await openai.beta.assistants.create(assistantConfig);
+    console.log(assistant);
+    assistantDetails = { ...assistant};
   } catch (error) {
     console.error("Error creating assistant:", error);
   }
@@ -42,7 +43,7 @@ async function retrieveAssistant(assistantId) {
   }
 
   try {
-    assistantDetails = openai.beta.assistants.retrieve(assistantId);
+    assistantDetails = await openai.beta.assistants.retrieve(assistantId);
   } catch (error) {
     console.error("Error retrieve assistant:", error);
   }
@@ -69,7 +70,7 @@ async function getOrCreateAssistant() {
     };
     // console.log("Assistant function:", openai.beta.assistants.get(assistantConfig));
 
-    const assistant = openai.beta.assistants.retrieve(assistantConfig.assistantId);
+    const assistant = await openai.beta.assistants.retrieve(assistantConfig.assistantId);
     assistantDetails = { assistantId: assistant.id, ...assistantConfig };
     // Save the assistant details to assistant.json
     await fsPromises.writeFile(
