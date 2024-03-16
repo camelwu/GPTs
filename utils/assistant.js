@@ -105,6 +105,11 @@ async function modifyAssistant(assistantConfig) {
   }
   return myUpdatedAssistant;
 }
+//
+async function deleteAssitant(assistantId) {
+  const response = await openai.beta.assistants.del(assistantId);
+  return response;
+}
 /** ---------thread--------- **/
 // Async function to create or get existing thread
 async function getOrCreateThread(threadID) {
@@ -157,6 +162,7 @@ module.exports = {
   createAssistant,
   getOrCreateAssistant,
   modifyAssistant,
+  deleteAssitant,
   getAssistantList,
   retrieveAssistant,
   getOrCreateThread

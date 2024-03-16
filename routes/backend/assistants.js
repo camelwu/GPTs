@@ -1,5 +1,5 @@
 const { json } = require("express/lib/response");
-const { createAssistant, getAssistantList } = require("../../utils/assistant");
+const { createAssistant, getAssistantList, modifyAssistant, deleteAssitant } = require("../../utils/assistant");
 
 /**
  * 创建助手，与获取列表同名，但方法分别是get｜post
@@ -52,10 +52,54 @@ module.exports = function (app) {
       if (assistantDetails) {
         res.json({ response: assistantDetails });
       } else {
-        res.status(500).send("No response from the assistant-api.");
+        res.status(500).send("create assistant fail.");
       }
     } catch (error) {
       // console.error(error);
+      res.status(500).send("An error occurred", error);
+    }
+  });
+  app.route('/assistants/:id').put(async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(500).send("Missing required fields 'id'.");
+      res.end();
+    }
+    const { name, instructions, tools, model= 'gpt-4-1106-preview', file_ids } = req.body;
+    if (!name) {
+      res.status(500).send("Missing required fields 'name'.");
+    }
+    if (!instructions) {
+      res.status(500).send("Missing required fields 'instructions'.");
+    }
+    if (typeof tools === 'string') {
+      tools = JSON.parse(tools);
+    }
+    try {
+      const assistantDetails = await modifyAssistant({ id, name, instructions, tools, model, file_ids });
+      if (assistantDetails) {
+        res.json({ response: assistantDetails });
+      } else {
+        res.status(500).send("update assistant fail.");
+      }
+    } catch (error) {
+      // console.error(error);
+      res.status(500).send("An error occurred", error);
+    }
+  }).delete(async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(500).send("Missing required fields 'id'.");
+      res.end();
+    }
+    try {
+      const assistantDetails = await deleteAssitant(id);
+      if (assistantDetails) {
+        res.json({ response: assistantDetails });
+      } else {
+        res.status(500).send("delete assistant fail.");
+      }
+    } catch (error) {
       res.status(500).send("An error occurred", error);
     }
   });
