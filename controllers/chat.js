@@ -44,11 +44,11 @@ async function control(req, res) {
         threadId: thread.id
       });
     } else {
-      res.status(500).send("No response received from the assistant.");
+      return res.status(500).send("No response received from the assistant.");
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send("An error occurred", error);
+    return res.status(500).send("An error occurred, " + error);
   }
 }
 

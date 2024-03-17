@@ -19,10 +19,10 @@ async function control(req, res) {
       file_ids: [...existingFileIds, file.id],
     });
 
-    res.send("File uploaded and successfully added to assistant");
+    return res.send("File uploaded and successfully added to assistant");
   } catch (error) {
     console.error(error);
-    res.status(500).send("An error occurred during file upload", error);
+    return res.status(500).send("An error occurred during file upload, " + error);
   }
 }
 

@@ -1,5 +1,5 @@
 const { json } = require("express/lib/response");
-const { createAssistant, getAssistantList, modifyAssistant, deleteAssitant } = require("../../utils/assistant");
+const { createAssistant, getAssistantList, retrieveAssistant, modifyAssistant, deleteAssitant } = require("../../utils/assistant");
 
 /**
  * 创建助手，与获取列表同名，但方法分别是get｜post
@@ -13,13 +13,12 @@ module.exports = function (app) {
       const assistantLists = await getAssistantList({ order, limit });
 
       if (assistantLists) {
-        res.json({ response: assistantLists });
+        return res.json({ response: assistantLists });
       } else {
-        res.status(500).send("No response received from the assistant.");
+        return res.status(500).send("No response received from the assistant.");
       }
     } catch (error) {
-      console.error(error);
-      res.status(500).send("An error occurred", error);
+      return res.status(500).send("An error occurred," + error);
     }
   }).post(async (req, res) => {
     // POST endpoint to handle chat
@@ -35,10 +34,10 @@ module.exports = function (app) {
      */
     let { name, instructions, tools = [], model = 'gpt-4-1106-preview' } = req.body;
     if (!name) {
-      res.status(500).send("Missing required fields 'name'.");
+      return res.status(500).send("Missing required fields 'name'.");
     }
     if (!instructions) {
-      res.status(500).send("Missing required fields 'instructions'.");
+      return res.status(500).send("Missing required fields 'instructions'.");
     }
     if (typeof tools === 'string') {
       tools = JSON.parse(tools);
@@ -52,25 +51,40 @@ module.exports = function (app) {
       if (assistantDetails) {
         res.json({ response: assistantDetails });
       } else {
-        res.status(500).send("create assistant fail.");
+        return res.status(500).send("create assistant fail.");
       }
     } catch (error) {
-      // console.error(error);
-      res.status(500).send("An error occurred", error);
+      return res.status(500).send("An error occurred," + error);
     }
   });
-  app.route('/assistants/:id').put(async (req, res) => {
+  app.route('/assistants/:id').get(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(500).send("Missing required fields 'id'.");
+      return res.status(500).send("Missing required fields 'id'.");
       res.end();
     }
-    const { name, instructions, tools, model= 'gpt-4-1106-preview', file_ids } = req.body;
+    try {
+      const assistantDetails = await retrieveAssistant(id);
+      if (assistantDetails) {
+        return res.json({ response: assistantDetails });
+      } else {
+        return res.status(500).send("get assistant fail.");
+      }
+    } catch (error) {
+      return res.status(500).send("An error occurred, " + error);
+    }
+  }).put(async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(500).send("Missing required fields 'id'.");
+      res.end();
+    }
+    const { name, instructions, tools, model = 'gpt-4-1106-preview', file_ids } = req.body;
     if (!name) {
-      res.status(500).send("Missing required fields 'name'.");
+      return res.status(500).send("Missing required fields 'name'.");
     }
     if (!instructions) {
-      res.status(500).send("Missing required fields 'instructions'.");
+      return res.status(500).send("Missing required fields 'instructions'.");
     }
     if (typeof tools === 'string') {
       tools = JSON.parse(tools);
@@ -78,29 +92,29 @@ module.exports = function (app) {
     try {
       const assistantDetails = await modifyAssistant({ id, name, instructions, tools, model, file_ids });
       if (assistantDetails) {
-        res.json({ response: assistantDetails });
+        return res.json({ response: assistantDetails });
       } else {
-        res.status(500).send("update assistant fail.");
+        return res.status(500).send("update assistant fail.");
       }
     } catch (error) {
       // console.error(error);
-      res.status(500).send("An error occurred", error);
+      return res.status(500).send("An error occurred, " + error);
     }
   }).delete(async (req, res) => {
     const { id } = req.params;
     if (!id) {
-      res.status(500).send("Missing required fields 'id'.");
+      return res.status(500).send("Missing required fields 'id'.");
       res.end();
     }
     try {
       const assistantDetails = await deleteAssitant(id);
       if (assistantDetails) {
-        res.json({ response: assistantDetails });
+        return res.json({ response: assistantDetails });
       } else {
-        res.status(500).send("delete assistant fail.");
+        return res.status(500).send("delete assistant fail.");
       }
     } catch (error) {
-      res.status(500).send("An error occurred", error);
+      return res.status(500).send("An error occurred, " + error);
     }
   });
 };
